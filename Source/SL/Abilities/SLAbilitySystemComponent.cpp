@@ -11,21 +11,36 @@ void USLAbilitySystemComponent::AddActorAbilities(AActor* InActor, const USLAbil
 {
     check(InActor);
     
-    // 서버 권한 확인
     if (!InActor->HasAuthority())
     {
         return;
     }
 
-    // 1. Ability 부여 (InputTag 포함)
+    for (const FSLAbilitySet_AttributeSet& AttributeToGrant : InAbilitySet.GrantAttributeSets)
+    {
+        if (!IsValid(AttributeToGrant.AttributeSet)) continue;
+
+        const UAttributeSet* ExistingSet = GetAttributeSubobject(AttributeToGrant.AttributeSet);
+        if (ExistingSet) 
+        {
+            continue; 
+        }
+
+        // 이미 동일한 타입의 AttributeSet이 있는지 확인 후 추가
+        UAttributeSet* NewAS = NewObject<UAttributeSet>(InActor, AttributeToGrant.AttributeSet);
+        if (NewAS)
+        {
+            AddAttributeSetSubobject(NewAS);
+            UE_LOG(LogSL, Log, TEXT("%s 부여 성공: 어트리뷰트 %s"),*GetOwner()->GetName(), *AttributeToGrant.AttributeSet->GetName());
+        }
+    }
+
     for (const FSLAbilitySet_GameplayAbility& AbilityToGrant : InAbilitySet.GrantAbilitiesWithInputTag)
     {
         if (!IsValid(AbilityToGrant.Ability)) continue;
 
-        // Spec 생성 (Level 설정)
         FGameplayAbilitySpec Spec(AbilityToGrant.Ability, AbilityToGrant.AbilityLevel);
         
-        // 중요: 입력 태그를 DynamicSpecSourceTags에 추가하여 
         // 아까 구현한 AbilityInputTagPressed에서 검색 가능하게 함
         if (AbilityToGrant.InputTag.IsValid())
         {
@@ -42,31 +57,17 @@ void USLAbilitySystemComponent::AddActorAbilities(AActor* InActor, const USLAbil
         }
     }
 
-    // 2. GameplayEffect 부여
     for (const FSLAbilitySet_GameplayEffect& EffectToGrant : InAbilitySet.GrantGameplayEffects)
     {
         if (!IsValid(EffectToGrant.GameplayEffect)) continue;
 
-        const UGameplayEffect* GE = EffectToGrant.GameplayEffect->GetDefaultObject<UGameplayEffect>();
-        FActiveGameplayEffectHandle GEHandle = ApplyGameplayEffectToSelf(GE, EffectToGrant.EffectLevel, MakeEffectContext());
+        FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+        FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(EffectToGrant.GameplayEffect, EffectToGrant.EffectLevel, ContextHandle);
+        FActiveGameplayEffectHandle GEHandle = ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
         if (GEHandle.IsValid())
         {
             UE_LOG(LogSL, Log, TEXT("부여 성공: 이펙트 %s"), *EffectToGrant.GameplayEffect->GetName());
-        }
-    }
-
-    // 3. AttributeSet 부여
-    for (const FSLAbilitySet_AttributeSet& AttributeToGrant : InAbilitySet.GrantAttributeSets)
-    {
-        if (!IsValid(AttributeToGrant.AttributeSet)) continue;
-
-        // 이미 동일한 타입의 AttributeSet이 있는지 확인 후 추가
-        UAttributeSet* NewAS = NewObject<UAttributeSet>(this, AttributeToGrant.AttributeSet);
-        if (NewAS)
-        {
-            AddAttributeSetSubobject(NewAS);
-            UE_LOG(LogSL, Log, TEXT("부여 성공: 어트리뷰트 %s"), *AttributeToGrant.AttributeSet->GetName());
         }
     }
 }

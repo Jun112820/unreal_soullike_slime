@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "SLHero.generated.h"
 
+class UHealthAttributeSet;
+
 UCLASS()
-class SL_API ASLHero : public ACharacter
+class SL_API ASLHero : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	TObjectPtr<class USLAbilitySystemComponent> GetSLAbilitySystemComponent() const;
 
 protected:
@@ -36,6 +40,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class USLAbilitySystemComponent> SLAbilitySystemComponent;
 
+	UPROPERTY()
+	TObjectPtr<const UHealthAttributeSet> HealthSet;
+	
 	UPROPERTY()
 	TObjectPtr<class USLAbilitySet> LoadedAbilitySet;
 };

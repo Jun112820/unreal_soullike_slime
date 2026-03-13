@@ -30,16 +30,16 @@ void ASLHeroController::SetupInputComponent()
 	FPrimaryAssetId AssetId("InputSet", CharacterTag.GetTagLeafName());
 
 	AssetManager.LoadPrimaryAsset(AssetId);
-	HeroInputSet = Cast<USLInputSet>(AssetManager.GetPrimaryAssetObject(AssetId));
+	LoadedInputSet = Cast<USLInputSet>(AssetManager.GetPrimaryAssetObject(AssetId));
 
     UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
     UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
     if (Subsystem)
     {
-        if (HeroInputSet)
+        if (LoadedInputSet)
         {
-            for (const TObjectPtr<UInputMappingContext>& IMC : HeroInputSet->AdditionalIMCs)
+            for (const TObjectPtr<UInputMappingContext>& IMC : LoadedInputSet->AdditionalIMCs)
             {
                 if (IMC) Subsystem->AddMappingContext(IMC, 1);
             }
@@ -48,9 +48,9 @@ void ASLHeroController::SetupInputComponent()
 
     if (EnhancedInputComponent)
     {
-        if (HeroInputSet)
+        if (LoadedInputSet)
         {
-        	for (const FSLInputAction& Action : HeroInputSet->NativeInputActions)
+        	for (const FSLInputAction& Action : LoadedInputSet->NativeInputActions)
         	{
         		if (Action.InputAction && Action.InputTag.IsValid())
         		{
@@ -67,7 +67,7 @@ void ASLHeroController::SetupInputComponent()
         		}
         	}
         	
-            for (const FSLInputAction& Action : HeroInputSet->AbilityInputActions)
+            for (const FSLInputAction& Action : LoadedInputSet->AbilityInputActions)
             {
                 if (Action.InputAction && Action.InputTag.IsValid())
                 {

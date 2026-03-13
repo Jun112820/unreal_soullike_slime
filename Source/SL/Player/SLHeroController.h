@@ -34,5 +34,5 @@ private:
 
 private:
 	UPROPERTY()
-	TObjectPtr<USLInputSet> HeroInputSet;
+	TObjectPtr<USLInputSet> LoadedInputSet;
 };
