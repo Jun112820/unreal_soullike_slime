@@ -24,9 +24,6 @@ public:
 	ATTRIBUTE_ACCESSORS(UHealthAttributeSet, Healing);
 	ATTRIBUTE_ACCESSORS(UHealthAttributeSet, Damage);
 
-	mutable FSLAttributeEvent OnHealthChanged;
-	mutable FSLAttributeEvent OnMaxHealthChanged;
-
 protected:
 	// Begin UAttributeSet~
 	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
@@ -35,23 +32,13 @@ protected:
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	// ~End UAttributeSet
 
-	// Begin ~
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
-	// ~End
-	
-	UFUNCTION()
-	void OnRep_Health(const FGameplayAttributeData& OldValue);
-
-	UFUNCTION()
-	void OnRep_MaxHealth(const FGameplayAttributeData& OldValue);
-
-	
 private:
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Health", Meta = (HideFromModifiers, AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly,  Category = "Health", Meta = (HideFromModifiers, AllowPrivateAccess = true))
 	FGameplayAttributeData Health;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Health", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly,  Category = "Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
 
 	UPROPERTY(BlueprintReadOnly, Category="Health", Meta=(AllowPrivateAccess=true))

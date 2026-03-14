@@ -31,4 +31,7 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAnimMontage> DodgeMontage;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> ReduceStaminaEffectClass;
 };

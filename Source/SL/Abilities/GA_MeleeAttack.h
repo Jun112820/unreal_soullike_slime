@@ -33,6 +33,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void PerformMeleeTrace();
 
+protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float AttackDamage = 10.0f;
 

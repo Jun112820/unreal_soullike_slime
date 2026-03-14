@@ -26,7 +26,8 @@ public class SL : ModuleRules
         	"Paper2D",
 	        "GameplayTags",
 	        "GameplayTasks",
-	        "GameplayAbilities"
+	        "GameplayAbilities",
+	        "ModelViewViewModel"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[]

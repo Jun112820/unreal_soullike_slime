@@ -1,4 +1,7 @@
 #include "SL/Abilities/GA_Dodge.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/Character.h"
 #include "SL/Util/SLLogChannels.h"
@@ -33,6 +36,15 @@ void UGA_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const F
             TargetRotation.Roll = 0.f;
 
             Character->SetActorRotation(TargetRotation);
+        }
+
+        UAbilitySystemComponent* MyASC = GetAbilitySystemComponentFromActorInfo();
+        FGameplayEffectContextHandle ContextHandle = MyASC->MakeEffectContext();
+        FGameplayEffectSpecHandle SpecHandle = MyASC->MakeOutgoingSpec(ReduceStaminaEffectClass, GetAbilityLevel(), ContextHandle);
+
+        if (SpecHandle.IsValid())
+        {
+            MyASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
         }
     }
 

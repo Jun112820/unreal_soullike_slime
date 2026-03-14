@@ -102,16 +102,6 @@ void UHealthAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 			SetHealth(NewHealth);
 		}
 	}
-
-	if (GetHealth() != OldHealth)
-	{
-		OnHealthChanged.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, OldHealth, GetHealth());
-	}
-
-	if (GetMaxHealth() != OldMaxHealth)
-	{
-		OnMaxHealthChanged.Broadcast(Instigator, Causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, OldMaxHealth, GetMaxHealth());
-	}
 }
 
 void UHealthAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -136,12 +126,3 @@ void UHealthAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribut
 	}
 }
 
-void UHealthAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
-{
-	UE_LOG(LogSL, Warning, TEXT("UHealthAttributeSet::OnRep_Health %f -> %f"), OldValue.GetCurrentValue(), GetHealth());
-}
-
-void UHealthAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
-{
-	UE_LOG(LogSL, Warning, TEXT("UHealthAttributeSet::OnRep_MaxHealth %f -> %f"), OldValue.GetCurrentValue(), GetMaxHealth());
-}

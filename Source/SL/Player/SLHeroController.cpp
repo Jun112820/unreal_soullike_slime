@@ -5,11 +5,16 @@
 #include "GameFramework/Pawn.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "MVVMSubsystem.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/Character.h"
 #include "SL/Abilities/SLAbilitySystemComponent.h"
 #include "SL/Character/SLHero.h"
 #include "SL/Data/SLInputSet.h"
+#include "SL/Mvvm/HeroViewModel.h"
+#include "SL/UI/HeroHUDWidget.h"
+#include "View/MVVMView.h"
 
 ASLHeroController::ASLHeroController()
 {
@@ -79,6 +84,48 @@ void ASLHeroController::SetupInputComponent()
     }
 }
 
+void ASLHeroController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	if (!HeroHUDWidgetClass) return;
+
+	if (!HeroHUDWidget)
+	{
+		HeroHUDWidget = CreateWidget<UHeroHUDWidget>(this, HeroHUDWidgetClass);
+		HeroHUDWidget->AddToViewport();
+	}
+
+	UpdateHUDViewModel(InPawn);
+}
+
+void ASLHeroController::UpdateHUDViewModel(APawn* InPawn)
+{
+	if (!HeroHUDWidget) return;
+
+	if (!HeroVMInstance) 
+	{
+		HeroVMInstance = NewObject<UHeroViewModel>(this);
+	}
+
+	UMVVMSubsystem* MVVMSubsystem = GEngine->GetEngineSubsystem<UMVVMSubsystem>();
+	UMVVMView* MVVMView = MVVMSubsystem->GetViewFromUserWidget(HeroHUDWidget);
+    
+	if (MVVMView)
+	{
+		TScriptInterface<INotifyFieldValueChanged> VMInterface(HeroVMInstance);
+		MVVMView->SetViewModel(FName("HeroViewModel"), VMInterface);
+       
+		if (IAbilitySystemInterface* ASI = Cast<IAbilitySystemInterface>(InPawn))
+		{
+			if (UAbilitySystemComponent* NewASC = ASI->GetAbilitySystemComponent())
+			{
+				HeroVMInstance->InitializeViewModel(NewASC);
+			}
+		}
+	}
+}
+
 void ASLHeroController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
 	if (APawn* MyPawn = GetPawn<APawn>())
@@ -91,6 +138,19 @@ void ASLHeroController::PostProcessInput(const float DeltaTime, const bool bGame
 	}
 	
 	Super::PostProcessInput(DeltaTime, bGamePaused);
+}
+
+EDataValidationResult ASLHeroController::IsDataValid(class FDataValidationContext& Context) const
+{
+	EDataValidationResult Result = Super::IsDataValid(Context);
+
+	if (!HeroHUDWidgetClass)
+	{
+		Context.AddError(FText::FromString(TEXT("HeroHUDWidgetClass 비어있습니다. 반드시 설정해야 합니다.")));
+		Result = EDataValidationResult::Invalid;
+	}
+
+	return Result;
 }
 
 void ASLHeroController::InputAbilityTagPressed(const FInputActionValue& InputActionValue, FGameplayTag GameplayTag)

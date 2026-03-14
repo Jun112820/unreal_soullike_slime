@@ -43,7 +43,8 @@ void ASLEnemy::BeginPlay()
 			SLAbilitySystemComponent->AddActorAbilities(this, *LoadedAbilitySet);
 			HealthSet = SLAbilitySystemComponent->GetSet<UHealthAttributeSet>();
 
-			HealthSet->OnHealthChanged.AddUObject(this, &ASLEnemy::HandleHealthChanged);
+			SLAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(HealthSet->GetHealthAttribute())
+				.AddUObject(this, &ASLEnemy::HandleHealthChanged);
 		}
 	}
 }
@@ -53,16 +54,16 @@ void ASLEnemy::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 }
 
-void ASLEnemy::HandleHealthChanged(AActor* EffectInstigator, AActor* EffectCauser,
-	const FGameplayEffectSpec* EffectSpec, float EffectMagnitude, float OldValue, float NewValue)
+void ASLEnemy::HandleHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (NewValue <= 0.0f)
-    {
-        Die(EffectInstigator);
-    }
+	if (Data.Attribute == HealthSet->GetHealthAttribute())
+	{
+		if (Data.NewValue <= 0)
+			Die();
+	}
 }
 
-void ASLEnemy::Die(AActor* InActor)
+void ASLEnemy::Die()
 {
 	if (SLAbilitySystemComponent)
 	{
