@@ -18,6 +18,8 @@ public:
 public:
 	void AddActorAbilities(AActor* InActor, const USLAbilitySet& InAbilitySet);
 	void RemoveActorAbilities();
+
+	UFUNCTION(BlueprintCallable)
 	void ApplyItemEffects(const TArray<TSubclassOf<UGameplayEffect>>& EffectClasses, float Level = 1.0f, AActor* EffectCauser = nullptr);
 	
 public:
