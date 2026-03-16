@@ -37,6 +37,8 @@ protected:
 	                FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
+
+	void OnTargetLockMessageReceived(FGameplayTag Channel, const FSLTargetLockMessage& Payload);
 	
 private:
 	UFUNCTION()

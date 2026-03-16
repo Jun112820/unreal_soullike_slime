@@ -11,6 +11,7 @@
 #include "GameFramework/Character.h"
 #include "SL/Abilities/SLAbilitySystemComponent.h"
 #include "SL/Character/SLHero.h"
+#include "SL/Data/SLAssetManager.h"
 #include "SL/Data/SLInputSet.h"
 #include "SL/Mvvm/AttributeViewModel.h"
 #include "SL/UI/BossHpWidget.h"
@@ -31,12 +32,9 @@ void ASLHeroController::SetupInputComponent()
     Super::SetupInputComponent();
 
     if (!IsLocalPlayerController()) return;
-	UAssetManager& AssetManager = UAssetManager::Get();
+	USLAssetManager& AssetManager = USLAssetManager::Get();
 	FGameplayTag CharacterTag = FGameplayTag::RequestGameplayTag(FName("Character.Hero")); 
-	FPrimaryAssetId AssetId("InputSet", CharacterTag.GetTagLeafName());
-
-	AssetManager.LoadPrimaryAsset(AssetId);
-	LoadedInputSet = Cast<USLInputSet>(AssetManager.GetPrimaryAssetObject(AssetId));
+	LoadedInputSet = AssetManager.GetInputSetByTag(CharacterTag);
 
     UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
     UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);

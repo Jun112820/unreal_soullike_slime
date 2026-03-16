@@ -36,6 +36,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UQuickSlotComponent* QuickSlot;
+
 protected:
 	UPROPERTY()
 	TObjectPtr<class USLAbilitySystemComponent> SLAbilitySystemComponent;
@@ -44,5 +47,5 @@ protected:
 	TObjectPtr<const UHealthAttributeSet> HealthSet;
 	
 	UPROPERTY()
-	TObjectPtr<class USLAbilitySet> LoadedAbilitySet;
+	TObjectPtr<class USLAbilitySet> AbilitySet;
 };

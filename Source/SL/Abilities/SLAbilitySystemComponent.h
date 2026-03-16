@@ -18,6 +18,7 @@ public:
 public:
 	void AddActorAbilities(AActor* InActor, const USLAbilitySet& InAbilitySet);
 	void RemoveActorAbilities();
+	void ApplyItemEffects(const TArray<TSubclassOf<UGameplayEffect>>& EffectClasses, float Level = 1.0f, AActor* EffectCauser = nullptr);
 	
 public:
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);

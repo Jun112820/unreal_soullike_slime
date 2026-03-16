@@ -12,6 +12,7 @@
 #include "SL/Abilities/SLAbilitySystemComponent.h"
 #include "SL/Attributes/HealthAttributeSet.h"
 #include "SL/Data/SLAbilitySet.h"
+#include "SL/Data/SLAssetManager.h"
 #include "SL/Util/SLLogChannels.h"
 
 ASLEnemy::ASLEnemy()
@@ -35,14 +36,9 @@ void ASLEnemy::BeginPlay()
 	{
 		SLAbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-		UAssetManager& AssetManager = UAssetManager::Get();
-		TArray<FPrimaryAssetId> AssetIds;
-		
+		USLAssetManager& AssetManager = USLAssetManager::Get();
 		FGameplayTag CharacterTag = FGameplayTag::RequestGameplayTag(FName("Character.Slime")); 
-		FPrimaryAssetId AssetId("AbilitySet", CharacterTag.GetTagLeafName());
-
-		AssetManager.LoadPrimaryAsset(AssetId);
-		LoadedAbilitySet = Cast<USLAbilitySet>(AssetManager.GetPrimaryAssetObject(AssetId));
+		LoadedAbilitySet = AssetManager.GetAbilitySetByTag(CharacterTag);
 		
 		if (LoadedAbilitySet)
 		{
@@ -95,7 +91,7 @@ void ASLEnemy::Die()
 	}
 
 	FSLTargetLockMessage Msg;
-	Msg.TargetActor = this;
+	Msg.TargetActor = nullptr;
 	Msg.bIsLockedOn = false;
 	UGameplayMessageSubsystem::Get(this).BroadcastMessage(FGameplayTag::RequestGameplayTag(FName("Message.LockOn")), Msg);
 

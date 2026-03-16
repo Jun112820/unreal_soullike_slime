@@ -4,8 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
+#include "Components/SlateWrapperTypes.h"
+#include "SL/Item/SLItem.h"
 #include "AttributeViewModel.generated.h"
 
+class UTexture2D;
+struct FSLEquipItemMessage;
 /**
  * 
  */
@@ -15,27 +19,39 @@ class SL_API UAttributeViewModel : public UMVVMViewModelBase
 	GENERATED_BODY()
 
 public:
+	UAttributeViewModel();
+	
 	void InitializeViewModel(class UAbilitySystemComponent* ASC);
 
-public:
-	void SetHealthPercent(float InValue) { HealthPercent = InValue; }
-	float GetHealthPercent() const { return HealthPercent; }
-
-	void SetStaminaPercent(float InValue) { StaminaPercent = InValue; }
-	float GetStaminaPercent() const { return StaminaPercent; }
-
 protected:
+	// Attribute
 	void OnHealthChanged(const struct FOnAttributeChangeData& Data);
 	void OnStaminaChanged(const struct FOnAttributeChangeData& Data);
 	void RefreshHealth();
 	void RefreshStamina();
+	
+	//Item
+	void OnItemOverlapped(FGameplayTag Channel, const FSLItemOverlapMessage& Payload);
+	void OnItemEquipped(FGameplayTag Channel, const FSLEquipItemMessage& Payload);
 
 protected:
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Setter, Getter, Category = "UI")
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
 	float HealthPercent;
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Setter, Getter, Category = "UI")
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
 	float StaminaPercent;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
+	ESlateVisibility PickupVisibility = ESlateVisibility::Collapsed;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
+	FText PickupItemName;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
+	TObjectPtr<UTexture2D> EquipItemImage;
+	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
+	TObjectPtr<UTexture2D> WeaponImage;
 
 private:
 	TWeakObjectPtr<const class UHealthAttributeSet> HealthSetPtr;

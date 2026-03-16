@@ -91,6 +91,27 @@ void USLAbilitySystemComponent::RemoveActorAbilities()
     InputReleasedSpecHandles.Empty();
 }
 
+void USLAbilitySystemComponent::ApplyItemEffects(const TArray<TSubclassOf<UGameplayEffect>>& EffectClasses, float Level, AActor* EffectCauser)
+{
+    FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+    
+    if (EffectCauser)
+    {
+        ContextHandle.AddInstigator(EffectCauser, EffectCauser);
+    }
+
+    for (const TSubclassOf<UGameplayEffect>& EffectClass : EffectClasses)
+    {
+        if (!EffectClass) continue;
+
+        FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(EffectClass, Level, ContextHandle);
+        if (SpecHandle.IsValid())
+        {
+            ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+        }
+    }
+}
+
 void USLAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
 {
     static TArray<FGameplayAbilitySpecHandle> AbilitiesToActivate;

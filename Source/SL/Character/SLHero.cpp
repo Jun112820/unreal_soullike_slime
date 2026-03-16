@@ -4,6 +4,7 @@
 #include "SL/Character/SLHero.h"
 
 #include "AbilitySystemComponent.h"
+#include "QuickSlotComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/AssetManager.h"
@@ -12,6 +13,7 @@
 #include "SL/Abilities/SLAbilitySystemComponent.h"
 #include "SL/Attributes/HealthAttributeSet.h"
 #include "SL/Data/SLAbilitySet.h"
+#include "SL/Data/SLAssetManager.h"
 #include "SL/Player/SLPlayerState.h"
 #include "SL/Util/SLLogChannels.h"
 
@@ -51,6 +53,8 @@ ASLHero::ASLHero()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false; // 카메라는 붐에 대해 상대적으로 회전하지 않음
 	FollowCamera->FieldOfView = 90.0f;
+
+	QuickSlot = CreateDefaultSubobject<UQuickSlotComponent>(TEXT("QuickSlot"));
 }
 
 void ASLHero::BeginPlay()
@@ -71,18 +75,13 @@ void ASLHero::PossessedBy(AController* NewController)
 		SLAbilitySystemComponent->RemoveActorAbilities();
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 
-		UAssetManager& AssetManager = UAssetManager::Get();
-		TArray<FPrimaryAssetId> AssetIds;
-		
+		USLAssetManager& AssetManager = USLAssetManager::Get();
 		FGameplayTag CharacterTag = FGameplayTag::RequestGameplayTag(FName("Character.Hero")); 
-		FPrimaryAssetId AssetId("AbilitySet", CharacterTag.GetTagLeafName());
-
-		AssetManager.LoadPrimaryAsset(AssetId);
-		LoadedAbilitySet = Cast<USLAbilitySet>(AssetManager.GetPrimaryAssetObject(AssetId));
-        
-		if (LoadedAbilitySet && SLAbilitySystemComponent)
+		AbilitySet = AssetManager.GetAbilitySetByTag(CharacterTag);
+		
+		if (AbilitySet && SLAbilitySystemComponent)
 		{
-			SLAbilitySystemComponent->AddActorAbilities(this, *LoadedAbilitySet);
+			SLAbilitySystemComponent->AddActorAbilities(this, *AbilitySet);
 			HealthSet = SLAbilitySystemComponent->GetSet<UHealthAttributeSet>();
 		}
 	}

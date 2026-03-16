@@ -3,8 +3,22 @@
 
 #include "SL/Mvvm/AttributeViewModel.h"
 
+#include "Components/SlateWrapperTypes.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "SL/Attributes/HealthAttributeSet.h"
 #include "SL/Attributes/StaminaAttributeSet.h"
+#include "SL/Character/QuickSlotComponent.h"
+#include "SL/Data/ItemData.h"
+
+UAttributeViewModel::UAttributeViewModel()
+{
+	static ConstructorHelpers::FObjectFinder<UTexture2D> DefaultTexture(TEXT("/Script/Engine.Texture2D'/Game/SL/Hero/UI/T_ItemBackground.T_ItemBackground'"));
+	if (DefaultTexture.Succeeded())
+	{
+		EquipItemImage = DefaultTexture.Object;
+		WeaponImage = DefaultTexture.Object;
+	}
+}
 
 void UAttributeViewModel::InitializeViewModel(UAbilitySystemComponent* ASC)
 {
@@ -31,6 +45,20 @@ void UAttributeViewModel::InitializeViewModel(UAbilitySystemComponent* ASC)
         
 		RefreshStamina();
 	}
+
+	UGameplayMessageSubsystem& MsgSubsystem = UGameplayMessageSubsystem::Get(this);
+	MsgSubsystem.RegisterListener(
+		FGameplayTag::RequestGameplayTag(FName("Message.ItemOverlap")),
+		this,
+		&UAttributeViewModel::OnItemOverlapped
+	);
+
+	MsgSubsystem.RegisterListener(
+		FGameplayTag::RequestGameplayTag(FName("Message.EquipItem")),
+		this,
+		&UAttributeViewModel::OnItemEquipped
+	);
+
 }
 
 void UAttributeViewModel::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -46,6 +74,32 @@ void UAttributeViewModel::OnStaminaChanged(const FOnAttributeChangeData& Data)
 	if (StaminaSetPtr.IsValid())
 	{
 		RefreshStamina();
+	}
+}
+
+void UAttributeViewModel::OnItemOverlapped(FGameplayTag Channel, const FSLItemOverlapMessage& Payload)
+{
+	if (Payload.bIsOverlapped == true)
+	{
+		auto NewVisibility = ESlateVisibility::Visible; 
+		UE_MVVM_SET_PROPERTY_VALUE(PickupVisibility, NewVisibility);
+
+		auto NewItemName = Payload.ItemName; 
+		UE_MVVM_SET_PROPERTY_VALUE(PickupItemName, NewItemName);
+	}
+	else
+	{
+		auto NewVisibility = ESlateVisibility::Collapsed; 
+		UE_MVVM_SET_PROPERTY_VALUE(PickupVisibility, NewVisibility);
+	}
+}
+
+void UAttributeViewModel::OnItemEquipped(FGameplayTag Channel, const FSLEquipItemMessage& Payload)
+{
+	if (Payload.bIsEquip == true)
+	{
+		auto NewImage = Payload.ItemData->Icon;
+		UE_MVVM_SET_PROPERTY_VALUE(EquipItemImage, NewImage);
 	}
 }
 
