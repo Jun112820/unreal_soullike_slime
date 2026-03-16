@@ -28,7 +28,7 @@ public class SL : ModuleRules
 	        "GameplayTasks",
 	        "GameplayAbilities",
 	        "ModelViewViewModel",
-	        "GameplayMessageRuntime"
+	        "GameplayMessageRuntime",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[]

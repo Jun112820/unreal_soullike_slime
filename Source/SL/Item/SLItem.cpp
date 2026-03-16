@@ -62,6 +62,7 @@ void ASLItem::BeginPlay()
 	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &ASLItem::OnSphereEndOverlap);
 }
 
+#if WITH_EDITOR
 EDataValidationResult ASLItem::IsDataValid(class FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = Super::IsDataValid(Context);
@@ -74,6 +75,7 @@ EDataValidationResult ASLItem::IsDataValid(class FDataValidationContext& Context
 	
 	return Result;
 }
+#endif
 
 void ASLItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

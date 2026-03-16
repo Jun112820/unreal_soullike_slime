@@ -5,6 +5,7 @@
 
 #include "Misc/DataValidation.h"
 
+#if WITH_EDITOR
 EDataValidationResult UItemData::IsDataValid(class FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = Super::IsDataValid(Context);
@@ -17,3 +18,4 @@ EDataValidationResult UItemData::IsDataValid(class FDataValidationContext& Conte
 
 	return Result;
 }
+#endif

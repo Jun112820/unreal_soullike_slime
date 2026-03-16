@@ -62,8 +62,10 @@ public:
 		return FPrimaryAssetId("AbilitySet", CharacterTag.GetTagLeafName());
 	}
 
+#if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
-
+#endif
+	
 public:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag CharacterTag;

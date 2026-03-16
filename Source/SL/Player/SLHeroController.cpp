@@ -183,6 +183,7 @@ void ASLHeroController::PostProcessInput(const float DeltaTime, const bool bGame
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
 
+#if WITH_EDITOR
 EDataValidationResult ASLHeroController::IsDataValid(class FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = Super::IsDataValid(Context);
@@ -195,6 +196,7 @@ EDataValidationResult ASLHeroController::IsDataValid(class FDataValidationContex
 
 	return Result;
 }
+#endif
 
 void ASLHeroController::InputAbilityTagPressed(const FInputActionValue& InputActionValue, FGameplayTag GameplayTag)
 {

@@ -39,15 +39,10 @@ public:
 		return FPrimaryAssetId("InputSet", CharacterTag.GetTagLeafName());
 	}
 
+#if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+#endif
 	
-public:
-	UFUNCTION(BlueprintCallable)
-	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
-	
-	UFUNCTION(BlueprintCallable)
-	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
-
 public:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag CharacterTag;

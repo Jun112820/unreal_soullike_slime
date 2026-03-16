@@ -31,8 +31,10 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 
+#if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
-
+#endif
+	
 	void InputAbilityTagPressed(const FInputActionValue& InputActionValue, FGameplayTag GameplayTag);
 	void InputAbilityTagReleased(const FInputActionValue& InputActionValue, FGameplayTag GameplayTag);
 
