@@ -59,6 +59,12 @@ void UAttributeViewModel::InitializeViewModel(UAbilitySystemComponent* ASC)
 		&UAttributeViewModel::OnItemEquipped
 	);
 
+	MsgSubsystem.RegisterListener(
+	FGameplayTag::RequestGameplayTag(FName("Message.UseItem")),
+	this,
+		&UAttributeViewModel::OnItemUsed
+	);
+
 }
 
 void UAttributeViewModel::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -100,7 +106,19 @@ void UAttributeViewModel::OnItemEquipped(FGameplayTag Channel, const FSLEquipIte
 	{
 		auto NewImage = Payload.ItemData->Icon;
 		UE_MVVM_SET_PROPERTY_VALUE(EquipItemImage, NewImage);
+
+		auto Count = Payload.ItemData->Count;
+		FString String = FString::Printf(TEXT("%d"), Count);
+		auto NewText = FText::FromString(String);
+		UE_MVVM_SET_PROPERTY_VALUE(EquipItemCountText, NewText);
 	}
+}
+
+void UAttributeViewModel::OnItemUsed(FGameplayTag Channel, const FSLUseItemMessage& Payload)
+{
+	FString String = FString::Printf(TEXT("%d"), Payload.RemainItemCount);
+	auto NewText = FText::FromString(String);
+	UE_MVVM_SET_PROPERTY_VALUE(EquipItemCountText, NewText);
 }
 
 void UAttributeViewModel::RefreshHealth()

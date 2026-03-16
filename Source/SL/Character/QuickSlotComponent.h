@@ -36,6 +36,21 @@ struct FSLEquipItemMessage
 	bool bIsEquip = false;
 };
 
+USTRUCT(BlueprintType)
+struct FSLUseItemMessage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AActor> UseActor = nullptr; 
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag ItemTag;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 RemainItemCount;
+};
+
 class ASLItem;
 struct FSLItemOverlapMessage;
 
@@ -63,4 +78,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UItemData> CurrentItemData;
+
+	int32 CurrentItemRemainCount;
 };

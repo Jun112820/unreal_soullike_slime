@@ -8,6 +8,7 @@
 #include "SL/Item/SLItem.h"
 #include "AttributeViewModel.generated.h"
 
+struct FSLUseItemMessage;
 class UTexture2D;
 struct FSLEquipItemMessage;
 /**
@@ -33,6 +34,7 @@ protected:
 	//Item
 	void OnItemOverlapped(FGameplayTag Channel, const FSLItemOverlapMessage& Payload);
 	void OnItemEquipped(FGameplayTag Channel, const FSLEquipItemMessage& Payload);
+	void OnItemUsed(FGameplayTag Channel, const FSLUseItemMessage& Payload);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
@@ -49,6 +51,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
 	TObjectPtr<UTexture2D> EquipItemImage;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
+	FText EquipItemCountText;
 	
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Category = "UI")
 	TObjectPtr<UTexture2D> WeaponImage;

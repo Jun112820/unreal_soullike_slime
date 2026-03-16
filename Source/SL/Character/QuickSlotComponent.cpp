@@ -11,13 +11,14 @@
 #include "SL/Util/SLLogChannels.h"
 
 UQuickSlotComponent::UQuickSlotComponent()
+	: CurrentItemRemainCount(0)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
 bool UQuickSlotComponent::CanUseItem() const
 {
-	if (!CurrentItemData)
+	if (!CurrentItemData || CurrentItemRemainCount == 0)
 		return false;
 
 	return true;
@@ -30,6 +31,13 @@ void UQuickSlotComponent::UseCurrentItem()
 		UE_LOG(LogSL, Error, TEXT("현재 선택된 아이템이 없습니다."));
 		return;
 	}
+
+	if (CurrentItemRemainCount <= 0)
+	{
+		UE_LOG(LogSL, Error, TEXT("현재 선택된 아이템을 다 사용했습니다."));
+		CurrentItemData = nullptr;
+		return;
+	}
 	
 	if (auto ASI = Cast<IAbilitySystemInterface>(GetOwner()))
 	{
@@ -38,8 +46,13 @@ void UQuickSlotComponent::UseCurrentItem()
 			if (CurrentItemData->ItemEffectClassArray.Num() > 0)
 			{
 				MyASC->ApplyItemEffects(CurrentItemData->ItemEffectClassArray, 1.0f, GetOwner());
-				UE_LOG(LogSL, Warning, TEXT("아이템 사용 : %s"), *CurrentItemData->ItemName.ToString());
-				CurrentItemData = nullptr;
+				UE_LOG(LogSL, Warning, TEXT("아이템 사용 : %s"), *CurrentItemData->Name.ToString());
+
+				FSLUseItemMessage Msg;
+				Msg.ItemTag = CurrentItemData->ItemTag;
+				Msg.UseActor = GetOwner();
+				Msg.RemainItemCount = --CurrentItemRemainCount;
+				UGameplayMessageSubsystem::Get(GetWorld()).BroadcastMessage(FGameplayTag::RequestGameplayTag("Message.UseItem"), Msg);
 			}
 		}
 	}
@@ -70,9 +83,11 @@ void UQuickSlotComponent::AddItem(ASLItem* Item)
 	Message.PickupActor = GetOwner();
 	MessageSubsystem.BroadcastMessage(FGameplayTag::RequestGameplayTag("Message.PickupItem"), Message);
 
+	CurrentItemRemainCount = CurrentItemData->Count;
+	
 	Item->Destroy();
 
-	UE_LOG(LogSL, Warning, TEXT("아이템 획득 : %s"), *CurrentItemData->ItemName.ToString());
+	UE_LOG(LogSL, Warning, TEXT("아이템 획득 : %s"), *CurrentItemData->Name.ToString());
 }
 
 void UQuickSlotComponent::BeginPlay()

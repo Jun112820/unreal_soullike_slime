@@ -99,7 +99,7 @@ void ASLItem::SendOverlapMessage(AActor* OtherActor, bool bIsOverlap)
 	Msg.OverlappedActor = OtherActor;
 	Msg.ItemActor = this;
 	Msg.bIsOverlapped = bIsOverlap;
-	Msg.ItemName = ItemData->ItemName;
+	Msg.ItemName = ItemData->Name;
 
 	UGameplayMessageSubsystem& MessageSubsystem = UGameplayMessageSubsystem::Get(this);
 	MessageSubsystem.BroadcastMessage(FGameplayTag::RequestGameplayTag(FName("Message.ItemOverlap")), Msg);

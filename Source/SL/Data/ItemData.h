@@ -29,7 +29,10 @@ public:
 	FGameplayTag ItemTag;
 
 	UPROPERTY(EditDefaultsOnly)
-	FText ItemName;
+	FText Name;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 Count;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UTexture2D> Icon;
