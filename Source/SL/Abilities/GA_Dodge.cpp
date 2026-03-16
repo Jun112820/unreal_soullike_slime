@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SL/Attributes/StaminaAttributeSet.h"
 #include "SL/Util/SLLogChannels.h"
 
 UGA_Dodge::UGA_Dodge(const FObjectInitializer& ObjectInitializer)
@@ -19,6 +20,7 @@ void UGA_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const F
                                 const FGameplayEventData* TriggerEventData)
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
     if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
     {
         EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -42,11 +44,6 @@ void UGA_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const F
 
             Character->SetActorRotation(TargetRotation);
         }
-
-        USLAbilitySystemComponent* MyASC = Cast<USLAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
-        TArray<TSubclassOf<UGameplayEffect>> Effects;
-        Effects.Add(ReduceStaminaEffectClass);
-        MyASC->ApplyItemEffects(Effects);
     }
 
     if (DodgeMontage)
@@ -66,6 +63,9 @@ void UGA_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const F
         MontageTask->OnInterrupted.AddDynamic(this, &UGA_Dodge::OnMontageInterrupted);
         MontageTask->OnCancelled.AddDynamic(this, &UGA_Dodge::OnMontageInterrupted);
 
+        USLAbilitySystemComponent* MyASC = Cast<USLAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+        MyASC->ApplyItemEffect(BlockRegenStaminaEffectClass);
+        
         MontageTask->ReadyForActivation();
     }
     else

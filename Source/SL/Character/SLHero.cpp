@@ -12,6 +12,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "SL/Abilities/SLAbilitySystemComponent.h"
 #include "SL/Attributes/HealthAttributeSet.h"
+#include "SL/Attributes/StaminaAttributeSet.h"
 #include "SL/Data/SLAbilitySet.h"
 #include "SL/Data/SLAssetManager.h"
 #include "SL/Player/SLPlayerState.h"

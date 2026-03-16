@@ -3,12 +3,13 @@
 
 #include "SL/Attributes/StaminaAttributeSet.h"
 
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
 UStaminaAttributeSet::UStaminaAttributeSet()
 	: Stamina(100.f)
 	, MaxStamina(100.f)
-	, StaminaRegenRate(20.f)
+	, StaminaRegenRate(1.f)
 {
 }
 
@@ -31,5 +32,15 @@ void UStaminaAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribut
 	else if (Attribute == GetMaxStaminaAttribute())
 	{
 		NewValue = FMath::Max(NewValue, 1.0f);
+	}
+}
+
+void UStaminaAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
 	}
 }

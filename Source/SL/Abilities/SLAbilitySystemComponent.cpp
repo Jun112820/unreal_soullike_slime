@@ -91,6 +91,24 @@ void USLAbilitySystemComponent::RemoveActorAbilities()
     InputReleasedSpecHandles.Empty();
 }
 
+void USLAbilitySystemComponent::ApplyItemEffect(const TSubclassOf<UGameplayEffect>& EffectClass, float Level,
+    AActor* EffectCauser)
+{
+    FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+    if (!EffectClass) return;
+    
+    if (EffectCauser)
+    {
+        ContextHandle.AddInstigator(EffectCauser, EffectCauser);
+    }
+
+    FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(EffectClass, Level, ContextHandle);
+    if (SpecHandle.IsValid())
+    {
+        ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+    }
+}
+
 void USLAbilitySystemComponent::ApplyItemEffects(const TArray<TSubclassOf<UGameplayEffect>>& EffectClasses, float Level, AActor* EffectCauser)
 {
     FGameplayEffectContextHandle ContextHandle = MakeEffectContext();

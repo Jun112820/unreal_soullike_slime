@@ -10,6 +10,7 @@
 #include "SL/Util/SLLogChannels.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "SLAbilitySystemComponent.h"
 
 UGA_MeleeAttack::UGA_MeleeAttack(const FObjectInitializer& ObjectInitializer)
 {
@@ -39,6 +40,8 @@ void UGA_MeleeAttack::ActivateAbility(FGameplayAbilitySpecHandle Handle, const F
 		MontageTask->OnCancelled.AddDynamic(this, &UGA_MeleeAttack::OnMontageInterrupted);
 		MontageTask->ReadyForActivation();
 
+		USLAbilitySystemComponent* MyASC = Cast<USLAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
+		MyASC->ApplyItemEffect(BlockRegenStaminaEffectClass);
 
 		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
 			this, 

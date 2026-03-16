@@ -34,7 +34,7 @@ protected:
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> ReduceStaminaEffectClass;
+	TSubclassOf<UGameplayEffect> BlockRegenStaminaEffectClass;
 	
 	bool bWasUsingControllerRotation = false;
 };
