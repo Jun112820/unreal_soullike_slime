@@ -5,6 +5,7 @@
 
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
+#include "SL/Interface/IDamageable.h"
 #include "SL/Util/SLLogChannels.h"
 
 UHealthAttributeSet::UHealthAttributeSet()
@@ -67,7 +68,7 @@ void UHealthAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 	Super::PostGameplayEffectExecute(Data); 
 
 	const FGameplayEffectContextHandle& EffectContext = Data.EffectSpec.GetEffectContext();
-	AActor* Instigator = EffectContext.GetOriginalInstigator();
+	AActor* Instigator = EffectContext.GetInstigatorAbilitySystemComponent()->GetAvatarActor();
 	AActor* Causer = EffectContext.GetEffectCauser();
 	AActor* TargetActor = GetOwningActor();
 
@@ -87,6 +88,14 @@ void UHealthAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
             
 			UE_LOG(LogSL, Warning, TEXT("[DAMAGE] Target: %s | Damage: %.1f | HP: %.1f -> %.1f"), 
 				*TargetActor->GetName(), LocalDamage, OldHealth, NewHealth);
+
+			if (APawn* Pawn = Cast<APawn>(TargetActor))
+			{
+				if (IDamageable* Damageable = Cast<IDamageable>(Pawn))
+				{
+					Damageable->HandleTakeDamage(Instigator);
+				}
+			}
 		}
 	}
 

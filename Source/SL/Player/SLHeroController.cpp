@@ -92,6 +92,11 @@ void ASLHeroController::OnPossess(APawn* InPawn)
 		HeroHUDWidget = CreateWidget<UHeroHUDWidget>(this, HeroHUDWidgetClass);
 		HeroHUDWidget->AddToViewport();
 	}
+	const ASLHero* Hero = Cast<ASLHero>(InPawn);
+	if (USLAbilitySystemComponent* MyASC = Hero->GetSLAbilitySystemComponent())
+	{
+		HeroASC = MyASC; 
+	}
 
 	UpdateHUDViewModel(InPawn);
 }
@@ -225,6 +230,9 @@ void ASLHeroController::InputAbilityTagReleased(const FInputActionValue& InputAc
 
 void ASLHeroController::Move(const FInputActionValue& Value)
 {
+	if (HeroASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("State.MoveBlocked")))
+		return;
+	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (APawn* ControlledPawn = GetPawn())

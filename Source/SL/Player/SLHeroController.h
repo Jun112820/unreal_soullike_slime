@@ -63,4 +63,7 @@ private:
 	TObjectPtr<UHeroHUDWidget> HeroHUDWidget;
 	UPROPERTY()
 	TObjectPtr<UBossHpWidget> BossHpWidget;
+
+	UPROPERTY()
+	TObjectPtr<class USLAbilitySystemComponent> HeroASC;
 };

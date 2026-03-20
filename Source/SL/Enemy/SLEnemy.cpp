@@ -3,6 +3,7 @@
 
 #include "SL/Enemy/SLEnemy.h"
 
+#include "SLEnemyAIController.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
@@ -64,7 +65,7 @@ void ASLEnemy::BeginPlay()
 		LockOnWidgetComp->InitWidget();
 		LockOnWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 		LockOnWidgetComp->SetDrawSize({16,16});
-		LockOnWidgetComp->SetPivot({0.5f,0.5f});
+		LockOnWidgetComp->SetPivot({0.5f,0.75f});
 		LockOnWidgetComp->GetWidget()->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
@@ -72,6 +73,16 @@ void ASLEnemy::BeginPlay()
 void ASLEnemy::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+}
+
+void ASLEnemy::HandleTakeDamage(AActor* Attacker)
+{
+	IDamageable::HandleTakeDamage(Attacker);
+
+	ASLEnemyAIController* AIC = Cast<ASLEnemyAIController>(GetController());
+	if (!AIC) return;
+
+	AIC->OnUnderAttack(Attacker);
 }
 
 void ASLEnemy::HandleHealthChanged(const FOnAttributeChangeData& Data)

@@ -5,22 +5,26 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "SL/Interface/IDamageable.h"
 #include "SLHero.generated.h"
 
 class UHealthAttributeSet;
 
 UCLASS()
-class SL_API ASLHero : public ACharacter, public IAbilitySystemInterface
+class SL_API ASLHero : public ACharacter, public IAbilitySystemInterface, public IDamageable
 {
 	GENERATED_BODY()
 
 public:
 	ASLHero();
+	
+	virtual void HandleTakeDamage(AActor* Attacker) override;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 
 public:	
 	virtual void Tick(float DeltaTime) override;

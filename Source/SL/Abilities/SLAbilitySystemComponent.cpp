@@ -91,8 +91,21 @@ void USLAbilitySystemComponent::RemoveActorAbilities()
     InputReleasedSpecHandles.Empty();
 }
 
+void USLAbilitySystemComponent::ActivateAbility(FGameplayTag GamePlayTag)
+{
+    for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+    {
+        if (Spec.GetDynamicSpecSourceTags().HasTagExact(GamePlayTag))
+        {
+            TryActivateAbility(Spec.Handle);
+
+            UE_LOG(LogSL, Warning, TEXT("%s  Try Activate Ability : %s"), *GetAvatarActor()->GetName(), *Spec.Handle.ToString())
+        }
+    }
+}
+
 void USLAbilitySystemComponent::ApplyItemEffect(const TSubclassOf<UGameplayEffect>& EffectClass, float Level,
-    AActor* EffectCauser)
+                                                AActor* EffectCauser)
 {
     FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
     if (!EffectClass) return;

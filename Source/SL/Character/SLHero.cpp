@@ -98,6 +98,15 @@ void ASLHero::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
+void ASLHero::HandleTakeDamage(AActor* Attacker)
+{
+	IDamageable::HandleTakeDamage(Attacker);
+
+	UE_LOG(LogSL, Warning, TEXT("Hero TakeDamage from : %s"), *Attacker->GetName());
+
+	SLAbilitySystemComponent->ActivateAbility(FGameplayTag::RequestGameplayTag(FName("Ability.Hit")));
+}
+
 void ASLHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

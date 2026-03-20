@@ -19,6 +19,8 @@ public:
 	void AddActorAbilities(AActor* InActor, const USLAbilitySet& InAbilitySet);
 	void RemoveActorAbilities();
 
+	UFUNCTION(BlueprintCallable)
+	void ActivateAbility(FGameplayTag GamePlayTag);
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyItemEffect(const TSubclassOf<UGameplayEffect>& EffectClass, float Level = 1.0f, AActor* EffectCauser = nullptr);

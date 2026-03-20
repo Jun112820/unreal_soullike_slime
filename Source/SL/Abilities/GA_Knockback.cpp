@@ -6,6 +6,7 @@
 #include "SLAbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "SL/Util/SLLogChannels.h"
 
 UGA_Knockback::UGA_Knockback()

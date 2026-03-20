@@ -16,15 +16,14 @@ class SL_API ASLEnemyAIController : public AAIController
 
 public:
 	ASLEnemyAIController();
-
+	void OnUnderAttack(AActor* Attacker);
+	
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	void OnPlayerDetected(APawn* PlayerPawn);
-
-private:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	bool bTargetFound = false;
 };

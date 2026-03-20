@@ -21,6 +21,7 @@ public:
 	ASLEnemy();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual void HandleTakeDamage(AActor* Attacker) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,6 +45,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UUserWidget> LockOnWidgetClass;
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UWidgetComponent> LockOnWidgetComp;
 };

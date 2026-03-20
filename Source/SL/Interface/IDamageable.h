@@ -7,6 +7,7 @@ class UDamageable : public UInterface { GENERATED_BODY() };
 class SL_API IDamageable
 {
 	GENERATED_BODY()
-public:
 	
+public:
+	virtual void HandleTakeDamage(AActor* Attacker) {}
 };

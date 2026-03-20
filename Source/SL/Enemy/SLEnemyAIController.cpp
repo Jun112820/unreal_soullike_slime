@@ -2,11 +2,34 @@
 
 
 #include "SL/Enemy/SLEnemyAIController.h"
+
+#include "BehaviorTree/BlackboardComponent.h"
 #include "SL/Player/SLHeroController.h"
 
 ASLEnemyAIController::ASLEnemyAIController()
 {
 	
+}
+
+void ASLEnemyAIController::OnUnderAttack(AActor* Attacker)
+{
+	if (!Attacker || bTargetFound) return;
+
+	UBlackboardComponent* BB = GetBlackboardComponent();
+	if (BB)
+	{
+		BB->SetValueAsObject(TEXT("TargetActor"), Attacker);
+	}
+
+	auto AttackerPawn = Cast<APawn>(Attacker);
+	if (!AttackerPawn) return;
+	
+	if (ASLHeroController* PC = Cast<ASLHeroController>(AttackerPawn->GetController()))
+	{
+		PC->ShowBossHPBar(GetPawn());
+	}
+
+	bTargetFound = true;
 }
 
 void ASLEnemyAIController::OnPossess(APawn* InPawn)
@@ -16,14 +39,5 @@ void ASLEnemyAIController::OnPossess(APawn* InPawn)
 	if (BehaviorTree)
 	{
 		RunBehaviorTree(BehaviorTree);
-	}
-}
-
-void ASLEnemyAIController::OnPlayerDetected(APawn* PlayerPawn)
-{
-	if (!PlayerPawn) return;
-	if (ASLHeroController* PC = Cast<ASLHeroController>(PlayerPawn->GetController()))
-	{
-		PC->ShowBossHPBar(GetPawn());
 	}
 }

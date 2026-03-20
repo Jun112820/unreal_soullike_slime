@@ -45,7 +45,7 @@ void UGA_MeleeAttack::ActivateAbility(FGameplayAbilitySpecHandle Handle, const F
 
 		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
 			this, 
-			FGameplayTag::RequestGameplayTag(TEXT("Event.Montage.MeleeAttack")),
+			FGameplayTag::RequestGameplayTag(TEXT("Event.Hero.Montage.MeleeAttack")),
 			nullptr, 
 			false, 
 			false
